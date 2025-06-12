@@ -5,8 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowLeft, Save } from 'lucide-react';
+import { ArrowLeft, Save, Sparkles } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:3000';
@@ -22,7 +21,6 @@ const EditCourse = () => {
     price: '',
     category: '',
     duration: '',
-    // level: 'Beginner'
   });
   const [loading, setLoading] = useState(true);
 
@@ -43,7 +41,6 @@ const EditCourse = () => {
           price: data.course.price?.toString() || '',
           category: data.course.category || '',
           duration: data.course.duration || '',
-          // level: data.course.level || 'Beginner'
         });
       } catch (err: any) {
         toast({
@@ -94,30 +91,57 @@ const EditCourse = () => {
   };
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-400"></div>
+      </div>
+    );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
-          <Button variant="ghost" className="mb-4" onClick={() => navigate(`/educator/courses/${courseId}`)}>
+        <div className="mb-8 animate-fade-in">
+          <Button 
+            variant="ghost" 
+            className="mb-4 text-cyan-400 hover:text-cyan-300 hover:bg-white/5" 
+            onClick={() => navigate(`/educator/courses/${courseId}`)}
+          >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Course
           </Button>
           
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Edit Course</h1>
-          <p className="text-gray-600">Update your course information</p>
+          <div className="relative">
+            <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 rounded-2xl blur-xl"></div>
+            <div className="relative bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-8">
+              <div className="flex items-center space-x-4">
+                <div className="w-16 h-16 bg-gradient-to-br from-cyan-400 to-purple-500 rounded-full flex items-center justify-center animate-glow">
+                  <Sparkles className="w-8 h-8 text-white" />
+                </div>
+                <div>
+                  <h1 className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
+                    Edit Course
+                  </h1>
+                  <p className="text-slate-300 text-lg">
+                    Update your course information
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <Card>
+        <Card className="bg-white/10 backdrop-blur-md border border-white/20 shadow-xl">
           <CardHeader>
-            <CardTitle>Course Details</CardTitle>
+            <CardTitle className="text-white flex items-center">
+              <Sparkles className="w-5 h-5 mr-2 text-cyan-400" />
+              Course Details
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <Label htmlFor="title">Course Title *</Label>
+                <Label htmlFor="title" className="text-slate-300">Course Title *</Label>
                 <Input
                   id="title"
                   name="title"
@@ -125,11 +149,12 @@ const EditCourse = () => {
                   onChange={handleChange}
                   required
                   placeholder="Enter course title"
+                  className="mt-2 bg-white/5 border-white/20 text-white placeholder:text-white/50 focus:border-cyan-400 focus:ring-cyan-400/20"
                 />
               </div>
 
               <div>
-                <Label htmlFor="description">Description *</Label>
+                <Label htmlFor="description" className="text-slate-300">Description *</Label>
                 <Textarea
                   id="description"
                   name="description"
@@ -138,12 +163,13 @@ const EditCourse = () => {
                   required
                   placeholder="Describe what students will learn..."
                   rows={4}
+                  className="mt-2 bg-white/5 border-white/20 text-white placeholder:text-white/50 focus:border-cyan-400 focus:ring-cyan-400/20"
                 />
               </div>
 
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
-                  <Label htmlFor="price">Price ($) *</Label>
+                  <Label htmlFor="price" className="text-slate-300">Price ($) *</Label>
                   <Input
                     id="price"
                     name="price"
@@ -154,11 +180,12 @@ const EditCourse = () => {
                     onChange={handleChange}
                     required
                     placeholder="0.00"
+                    className="mt-2 bg-white/5 border-white/20 text-white placeholder:text-white/50 focus:border-cyan-400 focus:ring-cyan-400/20"
                   />
                 </div>
                 
                 <div>
-                  <Label htmlFor="duration">Duration *</Label>
+                  <Label htmlFor="duration" className="text-slate-300">Duration *</Label>
                   <Input
                     id="duration"
                     name="duration"
@@ -166,44 +193,38 @@ const EditCourse = () => {
                     onChange={handleChange}
                     required
                     placeholder="e.g., 10 hours"
+                    className="mt-2 bg-white/5 border-white/20 text-white placeholder:text-white/50 focus:border-cyan-400 focus:ring-cyan-400/20"
                   />
                 </div>
               </div>
 
-              <div className="grid md:grid-cols-2 gap-6">
-                <div>
-                  <Label htmlFor="category">Category *</Label>
-                  <Input
-                    id="category"
-                    name="category"
-                    value={formData.category}
-                    onChange={handleChange}
-                    required
-                    placeholder="e.g., Technology, Design"
-                  />
-                </div>
-                
-                {/* <div>
-                  <Label htmlFor="level">Level *</Label>
-                  <Select value={formData.level} onValueChange={(value) => setFormData({...formData, level: value})}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select level" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-white">
-                      <SelectItem value="Beginner">Beginner</SelectItem>
-                      <SelectItem value="Intermediate">Intermediate</SelectItem>
-                      <SelectItem value="Advanced">Advanced</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  </div> */}
-                  </div>
+              <div>
+                <Label htmlFor="category" className="text-slate-300">Category *</Label>
+                <Input
+                  id="category"
+                  name="category"
+                  value={formData.category}
+                  onChange={handleChange}
+                  required
+                  placeholder="e.g., Technology, Design"
+                  className="mt-2 bg-white/5 border-white/20 text-white placeholder:text-white/50 focus:border-cyan-400 focus:ring-cyan-400/20"
+                />
+              </div>
 
               <div className="flex space-x-4">
-                <Button type="submit" className="flex-1">
+                <Button 
+                  type="submit" 
+                  className="flex-1 bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 text-white border-0"
+                >
                   <Save className="w-4 h-4 mr-2" />
                   Update Course
                 </Button>
-                <Button type="button" variant="outline" onClick={() => navigate(`/educator/courses/${courseId}`)}>
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  onClick={() => navigate(`/educator/courses/${courseId}`)}
+                  className="border-white/20 text-white hover:bg-white/10"
+                >
                   Cancel
                 </Button>
               </div>

@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { ArrowLeft, Sparkles } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:3000';
@@ -43,15 +44,24 @@ const AddModule = () => {
   }, [courseId]);
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-400"></div>
+      </div>
+    );
   }
 
   if (!course) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Course not found</h2>
-          <Button onClick={() => navigate('/educator/courses')}>Back to My Courses</Button>
+          <h2 className="text-2xl font-bold text-white mb-4">Course not found</h2>
+          <Button 
+            onClick={() => navigate('/educator/courses')}
+            className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 text-white border-0"
+          >
+            Back to My Courses
+          </Button>
         </div>
       </div>
     );
@@ -111,40 +121,68 @@ const AddModule = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">Add Module</h1>
-          <p className="text-gray-600">Add a new module to "{course.title}"</p>
+        <div className="mb-8 animate-fade-in">
+          <Button 
+            variant="ghost" 
+            className="mb-4 text-cyan-400 hover:text-cyan-300 hover:bg-white/5" 
+            onClick={() => navigate(`/educator/courses/${courseId}`)}
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Course
+          </Button>
+          
+          <div className="relative">
+            <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 rounded-2xl blur-xl"></div>
+            <div className="relative bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-8">
+              <div className="flex items-center space-x-4">
+                <div className="w-16 h-16 bg-gradient-to-br from-cyan-400 to-purple-500 rounded-full flex items-center justify-center animate-glow">
+                  <Sparkles className="w-8 h-8 text-white" />
+                </div>
+                <div>
+                  <h1 className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
+                    Add Module
+                  </h1>
+                  <p className="text-slate-300 text-lg">
+                    Add a new module to "{course.title}"
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <Card>
+        <Card className="bg-white/10 backdrop-blur-md border border-white/20 shadow-xl">
           <CardHeader>
-            <CardTitle>Module Information</CardTitle>
+            <CardTitle className="text-white flex items-center">
+              <Sparkles className="w-5 h-5 mr-2 text-cyan-400" />
+              Module Information
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <Label htmlFor="title">Module Title *</Label>
+                <Label htmlFor="title" className="text-slate-300">Module Title *</Label>
                 <Input
                   id="title"
                   value={moduleData.title}
                   onChange={(e) => handleChange('title', e.target.value)}
                   placeholder="Enter module title"
                   required
-                  className="mt-1"
+                  className="mt-2 bg-white/5 border-white/20 text-white placeholder:text-white/50 focus:border-cyan-400 focus:ring-cyan-400/20"
                 />
               </div>
 
               <div>
-                <Label htmlFor="description">Module Description *</Label>
+                <Label htmlFor="description" className="text-slate-300">Module Description *</Label>
                 <Textarea
                   id="description"
                   value={moduleData.description}
                   onChange={(e) => handleChange('description', e.target.value)}
                   placeholder="Describe what students will learn in this module"
                   required
-                  className="mt-1"
+                  className="mt-2 bg-white/5 border-white/20 text-white placeholder:text-white/50 focus:border-cyan-400 focus:ring-cyan-400/20"
                   rows={4}
                 />
               </div>
@@ -154,10 +192,14 @@ const AddModule = () => {
                   type="button" 
                   variant="outline"
                   onClick={() => navigate(`/educator/courses/${courseId}`)}
+                  className="border-white/20 text-white hover:bg-white/10"
                 >
                   Cancel
                 </Button>
-                <Button type="submit">
+                <Button 
+                  type="submit"
+                  className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 text-white border-0"
+                >
                   Create Module
                 </Button>
               </div>

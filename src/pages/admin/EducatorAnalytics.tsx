@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Link } from 'react-router-dom';
-import { Users, TrendingUp, Plus, UserMinus, UserX } from 'lucide-react';
+import { Users, TrendingUp, Plus, UserMinus, UserX, GraduationCap, Sparkles } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import {
   AlertDialog,
@@ -73,14 +73,31 @@ const EducatorAnalytics = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">Educator Management</h1>
-            <p className="text-gray-600">Manage platform educators and their access</p>
+        <div className="flex justify-between items-center mb-8 animate-fade-in">
+          <div className="relative">
+            <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 rounded-2xl blur-xl"></div>
+            <div className="relative bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-8">
+              <div className="flex items-center space-x-4">
+                <div className="w-16 h-16 bg-gradient-to-br from-cyan-400 to-purple-500 rounded-full flex items-center justify-center animate-glow">
+                  <GraduationCap className="w-8 h-8 text-white" />
+                </div>
+                <div>
+                  <h1 className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
+                    Educator Management
+                  </h1>
+                  <p className="text-slate-300 text-lg">
+                    Manage platform educators and their access
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
-          <Button asChild>
+          <Button 
+            asChild
+            className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 text-white border-0"
+          >
             <Link to="/admin/educators/add">
               <Plus className="w-4 h-4 mr-2" />
               Add Educator
@@ -90,242 +107,263 @@ const EducatorAnalytics = () => {
 
         {/* Overview Stats */}
         <div className="grid md:grid-cols-2 gap-6 mb-8">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Educators</CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{totalEducators}</div>
-            </CardContent>
-          </Card>
+          <div className="group hover:scale-105 transition-all duration-300">
+            <Card className="bg-white/10 backdrop-blur-md border border-white/20 hover:border-cyan-400/50 transition-all duration-300">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium text-slate-300">Total Educators</CardTitle>
+                <div className="p-2 bg-gradient-to-br from-cyan-400/20 to-cyan-600/20 rounded-lg">
+                  <Users className="h-4 w-4 text-cyan-400" />
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold text-white">{totalEducators}</div>
+              </CardContent>
+            </Card>
+          </div>
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Active Educators</CardTitle>
-              <TrendingUp className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{activeEducators}</div>
-              <p className="text-xs text-muted-foreground">
-                {totalEducators > 0 ? ((activeEducators / totalEducators) * 100).toFixed(1) : 0}% of total
-              </p>
-            </CardContent>
-          </Card>
+          <div className="group hover:scale-105 transition-all duration-300">
+            <Card className="bg-white/10 backdrop-blur-md border border-white/20 hover:border-purple-400/50 transition-all duration-300">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium text-slate-300">Active Educators</CardTitle>
+                <div className="p-2 bg-gradient-to-br from-purple-400/20 to-purple-600/20 rounded-lg">
+                  <TrendingUp className="h-4 w-4 text-purple-400" />
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold text-white">{activeEducators}</div>
+                <p className="text-xs text-slate-400">
+                  {totalEducators > 0 ? ((activeEducators / totalEducators) * 100).toFixed(1) : 0}% of total
+                </p>
+              </CardContent>
+            </Card>
+          </div>
         </div>
 
         {/* Educators Table */}
-        <Card>
+        <Card className="bg-white/10 backdrop-blur-md border border-white/20">
           <CardHeader>
-            <CardTitle>All Educators</CardTitle>
+            <CardTitle className="text-white flex items-center">
+              <Sparkles className="w-5 h-5 mr-2 text-cyan-400" />
+              All Educators
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Educator</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {loading ? (
-                  <TableRow>
-                    <TableCell colSpan={4}>Loading...</TableCell>
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow className="border-white/20">
+                    <TableHead className="text-slate-300">Educator</TableHead>
+                    <TableHead className="text-slate-300">Email</TableHead>
+                    <TableHead className="text-slate-300">Status</TableHead>
+                    <TableHead className="text-slate-300">Actions</TableHead>
                   </TableRow>
-                ) : educators.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={4}>No educators found.</TableCell>
-                  </TableRow>
-                ) : (
-                  educators.map((educator) => {
-                    const isActive = educator.isApproved === true;
-                    return (
-                      <TableRow key={educator._id || educator.id}>
-                        <TableCell>
-                          <div className="font-medium">{educator.name}</div>
-                        </TableCell>
-                        <TableCell>{educator.email}</TableCell>
-                        <TableCell>
-                          <Badge variant={isActive ? 'default' : 'secondary'}>
-                            {isActive ? 'active' : 'inactive'}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex gap-2">
-                            <Button variant="outline" size="sm" asChild>
-                              <Link to={`/admin/educators/${educator._id || educator.id}`}>
-                                View Details
-                              </Link>
-                            </Button>
-                            {isActive ? (
-                              // Make Inactive Button with confirmation
+                </TableHeader>
+                <TableBody>
+                  {loading ? (
+                    <TableRow className="border-white/10">
+                      <TableCell colSpan={4} className="text-center py-8">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-400 mx-auto"></div>
+                        <p className="text-slate-300 mt-2">Loading...</p>
+                      </TableCell>
+                    </TableRow>
+                  ) : educators.length === 0 ? (
+                    <TableRow className="border-white/10">
+                      <TableCell colSpan={4} className="text-center py-8 text-slate-300">No educators found.</TableCell>
+                    </TableRow>
+                  ) : (
+                    educators.map((educator) => {
+                      const isActive = educator.isApproved === true;
+                      return (
+                        <TableRow key={educator._id || educator.id} className="border-white/10 hover:bg-white/5">
+                          <TableCell className="text-white">
+                            <div className="font-medium">{educator.name}</div>
+                          </TableCell>
+                          <TableCell className="text-slate-300">{educator.email}</TableCell>
+                          <TableCell>
+                            <Badge className={isActive 
+                              ? "bg-green-500/20 text-green-400 border-green-500/30" 
+                              : "bg-yellow-500/20 text-yellow-400 border-yellow-500/30"
+                            }>
+                              {isActive ? 'active' : 'inactive'}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex gap-2">
+                              <Button 
+                                variant="outline" 
+                                size="sm" 
+                                asChild
+                                className="border-white/20 text-white hover:bg-white/10"
+                              >
+                                <Link to={`/admin/educators/${educator._id || educator.id}`}>
+                                  View Details
+                                </Link>
+                              </Button>
+                              {isActive ? (
+                                <AlertDialog>
+                                  <AlertDialogTrigger asChild>
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      className="border-orange-400/30 text-orange-400 hover:bg-orange-400/10"
+                                    >
+                                      Make Inactive
+                                    </Button>
+                                  </AlertDialogTrigger>
+                                  <AlertDialogContent className="bg-slate-800 border border-white/20 text-white">
+                                    <AlertDialogHeader>
+                                      <AlertDialogTitle className="text-white">Make Educator Inactive</AlertDialogTitle>
+                                      <AlertDialogDescription className="text-slate-300">
+                                        Are you sure you want to make {educator.name} inactive? This will prevent them from accessing educator features but won't delete their account.
+                                      </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                      <AlertDialogCancel className="border-white/20 text-white hover:bg-white/10">Cancel</AlertDialogCancel>
+                                      <AlertDialogAction
+                                        className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white border-0"
+                                        onClick={async () => {
+                                          try {
+                                            const res = await fetch(`${SERVER_URL}/api/users/educators/${educator._id || educator.id}/approve`, {
+                                              method: 'PATCH',
+                                              headers: {
+                                                'Content-Type': 'application/json',
+                                                Authorization: `Bearer ${localStorage.getItem('token')}`,
+                                              },
+                                              body: JSON.stringify({ isApproved: false }),
+                                            });
+                                            if (res.ok) {
+                                              toast({ title: "Educator made inactive." });
+                                              setEducators((prev) =>
+                                                prev.map((e) =>
+                                                  (e._id || e.id) === (educator._id || educator.id)
+                                                    ? { ...e, isApproved: false }
+                                                    : e
+                                                )
+                                              );
+                                            } else {
+                                              toast({ title: "Failed to update educator.", variant: "destructive" });
+                                            }
+                                          } catch {
+                                            toast({ title: "Failed to update educator.", variant: "destructive" });
+                                          }
+                                        }}
+                                      >
+                                        Confirm
+                                      </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                  </AlertDialogContent>
+                                </AlertDialog>
+                              ) : (
+                                <AlertDialog>
+                                  <AlertDialogTrigger asChild>
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      className="border-green-400/30 text-green-400 hover:bg-green-400/10"
+                                    >
+                                      Make Active
+                                    </Button>
+                                  </AlertDialogTrigger>
+                                  <AlertDialogContent className="bg-slate-800 border border-white/20 text-white">
+                                    <AlertDialogHeader>
+                                      <AlertDialogTitle className="text-white">Make Educator Active</AlertDialogTitle>
+                                      <AlertDialogDescription className="text-slate-300">
+                                        Are you sure you want to make {educator.name} active? This will allow them to access educator features.
+                                      </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                      <AlertDialogCancel className="border-white/20 text-white hover:bg-white/10">Cancel</AlertDialogCancel>
+                                      <AlertDialogAction
+                                        className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white border-0"
+                                        onClick={async () => {
+                                          try {
+                                            const res = await fetch(`${SERVER_URL}/api/users/educators/${educator._id || educator.id}/approve`, {
+                                              method: 'PATCH',
+                                              headers: {
+                                                'Content-Type': 'application/json',
+                                                Authorization: `Bearer ${localStorage.getItem('token')}`,
+                                              },
+                                              body: JSON.stringify({ isApproved: true }),
+                                            });
+                                            if (res.ok) {
+                                              toast({ title: "Educator made active." });
+                                              setEducators((prev) =>
+                                                prev.map((e) =>
+                                                  (e._id || e.id) === (educator._id || educator.id)
+                                                    ? { ...e, isApproved: true }
+                                                    : e
+                                                )
+                                              );
+                                            } else {
+                                              toast({ title: "Failed to update educator.", variant: "destructive" });
+                                            }
+                                          } catch {
+                                            toast({ title: "Failed to update educator.", variant: "destructive" });
+                                          }
+                                        }}
+                                      >
+                                        Confirm
+                                      </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                  </AlertDialogContent>
+                                </AlertDialog>
+                              )}
                               <AlertDialog>
                                 <AlertDialogTrigger asChild>
                                   <Button
                                     variant="outline"
                                     size="sm"
-                                    className="text-orange-600 hover:text-orange-700 hover:bg-orange-50"
+                                    className="border-red-400/30 text-red-400 hover:bg-red-400/10"
                                   >
-                                    Make Inactive
+                                    Remove
                                   </Button>
                                 </AlertDialogTrigger>
-                                <AlertDialogContent>
+                                <AlertDialogContent className="bg-slate-800 border border-white/20 text-white">
                                   <AlertDialogHeader>
-                                    <AlertDialogTitle>Make Educator Inactive</AlertDialogTitle>
-                                    <AlertDialogDescription>
-                                      Are you sure you want to make {educator.name} inactive? This will prevent them from accessing educator features but won't delete their account.
+                                    <AlertDialogTitle className="text-white">Remove Educator</AlertDialogTitle>
+                                    <AlertDialogDescription className="text-slate-300">
+                                      Are you sure you want to permanently remove {educator.name} from the platform? This action cannot be undone and will delete all their data.
                                     </AlertDialogDescription>
                                   </AlertDialogHeader>
                                   <AlertDialogFooter>
-                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogCancel className="border-white/20 text-white hover:bg-white/10">Cancel</AlertDialogCancel>
                                     <AlertDialogAction
-                                      className="bg-orange-600 hover:bg-orange-700"
+                                      className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white border-0"
                                       onClick={async () => {
                                         try {
-                                          const res = await fetch(`${SERVER_URL}/api/users/educators/${educator._id || educator.id}/approve`, {
-                                            method: 'PATCH',
+                                          const res = await fetch(`${SERVER_URL}/api/users/educators/${educator._id || educator.id}`, {
+                                            method: 'DELETE',
                                             headers: {
-                                              'Content-Type': 'application/json',
                                               Authorization: `Bearer ${localStorage.getItem('token')}`,
                                             },
-                                            body: JSON.stringify({ isApproved: false }),
                                           });
                                           if (res.ok) {
-                                            toast({ title: "Educator made inactive." });
+                                            toast({ title: "Educator removed." });
                                             setEducators((prev) =>
-                                              prev.map((e) =>
-                                                (e._id || e.id) === (educator._id || educator.id)
-                                                  ? { ...e, isApproved: false }
-                                                  : e
-                                              )
+                                              prev.filter((e) => (e._id || e.id) !== (educator._id || educator.id))
                                             );
                                           } else {
-                                            toast({ title: "Failed to update educator.", variant: "destructive" });
+                                            toast({ title: "Failed to remove educator.", variant: "destructive" });
                                           }
                                         } catch {
-                                          toast({ title: "Failed to update educator.", variant: "destructive" });
-                                        }
-                                      }}
-                                    >
-                                      Confirm
-                                    </AlertDialogAction>
-                                  </AlertDialogFooter>
-                                </AlertDialogContent>
-                              </AlertDialog>
-                            ) : (
-                              // Make Active Button with confirmation
-                              <AlertDialog>
-                                <AlertDialogTrigger asChild>
-                                  <Button
-                                    variant="outline"
-                                    size="sm"
-                                    className="text-green-600 hover:text-green-700 hover:bg-green-50"
-                                  >
-                                    Make Active
-                                  </Button>
-                                </AlertDialogTrigger>
-                                <AlertDialogContent>
-                                  <AlertDialogHeader>
-                                    <AlertDialogTitle>Make Educator Active</AlertDialogTitle>
-                                    <AlertDialogDescription>
-                                      Are you sure you want to make {educator.name} active? This will allow them to access educator features.
-                                    </AlertDialogDescription>
-                                  </AlertDialogHeader>
-                                  <AlertDialogFooter>
-                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                    <AlertDialogAction
-                                      className="bg-green-600 hover:bg-green-700"
-                                      onClick={async () => {
-                                        try {
-                                          const res = await fetch(`${SERVER_URL}/api/users/educators/${educator._id || educator.id}/approve`, {
-                                            method: 'PATCH',
-                                            headers: {
-                                              'Content-Type': 'application/json',
-                                              Authorization: `Bearer ${localStorage.getItem('token')}`,
-                                            },
-                                            body: JSON.stringify({ isApproved: true }),
-                                          });
-                                          if (res.ok) {
-                                            toast({ title: "Educator made active." });
-                                            setEducators((prev) =>
-                                              prev.map((e) =>
-                                                (e._id || e.id) === (educator._id || educator.id)
-                                                  ? { ...e, isApproved: true }
-                                                  : e
-                                              )
-                                            );
-                                          } else {
-                                            toast({ title: "Failed to update educator.", variant: "destructive" });
-                                          }
-                                        } catch {
-                                          toast({ title: "Failed to update educator.", variant: "destructive" });
-                                        }
-                                      }}
-                                    >
-                                      Confirm
-                                    </AlertDialogAction>
-                                  </AlertDialogFooter>
-                                </AlertDialogContent>
-                              </AlertDialog>
-                            )}
-                            {/* Delete Button with confirmation */}
-                            <AlertDialog>
-                              <AlertDialogTrigger asChild>
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                                >
-                                  Remove
-                                </Button>
-                              </AlertDialogTrigger>
-                              <AlertDialogContent>
-                                <AlertDialogHeader>
-                                  <AlertDialogTitle>Remove Educator</AlertDialogTitle>
-                                  <AlertDialogDescription>
-                                    Are you sure you want to permanently remove {educator.name} from the platform? This action cannot be undone and will delete all their data.
-                                  </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                  <AlertDialogAction
-                                    className="bg-red-600 hover:bg-red-700"
-                                    onClick={async () => {
-                                      try {
-                                        const res = await fetch(`${SERVER_URL}/api/users/educators/${educator._id || educator.id}`, {
-                                          method: 'DELETE',
-                                          headers: {
-                                            Authorization: `Bearer ${localStorage.getItem('token')}`,
-                                          },
-                                        });
-                                        if (res.ok) {
-                                          toast({ title: "Educator removed." });
-                                          setEducators((prev) =>
-                                            prev.filter((e) => (e._id || e.id) !== (educator._id || educator.id))
-                                          );
-                                        } else {
                                           toast({ title: "Failed to remove educator.", variant: "destructive" });
                                         }
-                                      } catch {
-                                        toast({ title: "Failed to remove educator.", variant: "destructive" });
-                                      }
-                                    }}
-                                  >
-                                    Confirm
-                                  </AlertDialogAction>
-                                </AlertDialogFooter>
-                              </AlertDialogContent>
-                            </AlertDialog>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })
-                )}
-              </TableBody>
-            </Table>
+                                      }}
+                                    >
+                                      Confirm
+                                    </AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })
+                  )}
+                </TableBody>
+              </Table>
+            </div>
           </CardContent>
         </Card>
       </div>
