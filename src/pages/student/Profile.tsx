@@ -7,7 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { User, BookOpen, Award, Calendar, Edit3 } from 'lucide-react';
+import { User, BookOpen, Award, Calendar, Edit3, Sparkles, Target, Trophy } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 
@@ -26,7 +26,6 @@ const StudentProfile = () => {
   const [enrolledCourses, setEnrolledCourses] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Password update state
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -35,7 +34,6 @@ const StudentProfile = () => {
     const fetchProfileAndCourses = async () => {
       setLoading(true);
       try {
-        // Fetch student profile
         const profileRes = await fetch(`${SERVER_URL}/api/users/profile`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -53,7 +51,6 @@ const StudentProfile = () => {
           });
         }
 
-        // Fetch enrolled courses
         const enrollmentsRes = await fetch(`${SERVER_URL}/api/enrollments`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -61,7 +58,6 @@ const StudentProfile = () => {
         });
         const enrollmentsJson = await enrollmentsRes.json();
         if (enrollmentsRes.ok && Array.isArray(enrollmentsJson.enrollments)) {
-          // Map enrollments to course info
           const mappedCourses = enrollmentsJson.enrollments.map((enrollment: any) => {
             const course = enrollment.courseId;
             return {
@@ -122,34 +118,47 @@ const StudentProfile = () => {
   };
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-400"></div>
+      </div>
+    );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Profile Header */}
-        <Card className="mb-8">
+        <Card className="mb-8 bg-white/10 backdrop-blur-md border border-white/20">
           <CardContent className="pt-6">
             <div className="flex items-center space-x-6">
-              <Avatar className="w-24 h-24">
-                <AvatarImage src={profileData.profileImage} alt={profileData.name} />
-                <AvatarFallback className="text-2xl">{profileData.name?.charAt(0)}</AvatarFallback>
-              </Avatar>
+              <div className="relative">
+                <Avatar className="w-24 h-24 border-2 border-cyan-400/50">
+                  <AvatarImage src={profileData.profileImage} alt={profileData.name} />
+                  <AvatarFallback className="text-2xl bg-gradient-to-br from-cyan-400 to-purple-500 text-white">
+                    {profileData.name?.charAt(0)}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-gradient-to-br from-cyan-400 to-purple-500 rounded-full flex items-center justify-center">
+                  <Sparkles className="w-3 h-3 text-white" />
+                </div>
+              </div>
               
               <div className="flex-1">
                 <div className="flex items-center justify-between mb-2">
-                  <h1 className="text-3xl font-bold text-gray-900">{profileData.name}</h1>
+                  <h1 className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
+                    {profileData.name}
+                  </h1>
                   <Button 
                     variant="outline" 
                     onClick={() => setIsEditing(!isEditing)}
-                    className="flex items-center"
+                    className="flex items-center border-white/20 text-white hover:bg-white/10"
                   >
                     <Edit3 className="w-4 h-4 mr-2" />
                     {isEditing ? 'Cancel' : 'Edit Profile'}
                   </Button>
                 </div>
-                <div className="flex items-center space-x-6 text-sm text-gray-500">
+                <div className="flex items-center space-x-6 text-sm text-slate-400">
                   <div className="flex items-center">
                     <Calendar className="w-4 h-4 mr-1" />
                     Joined {profileData.joined}
@@ -169,49 +178,61 @@ const StudentProfile = () => {
         </Card>
 
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="courses">My Courses</TabsTrigger>
-            <TabsTrigger value="settings">Settings</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-3 bg-white/10 backdrop-blur-md border border-white/20">
+            <TabsTrigger value="overview" className="text-white data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-500 data-[state=active]:to-purple-500">
+              Overview
+            </TabsTrigger>
+            <TabsTrigger value="courses" className="text-white data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-500 data-[state=active]:to-purple-500">
+              My Courses
+            </TabsTrigger>
+            <TabsTrigger value="settings" className="text-white data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-500 data-[state=active]:to-purple-500">
+              Settings
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview" className="space-y-6">
             {/* Learning Stats */}
             <div className="grid md:grid-cols-3 gap-6">
-              <Card>
+              <Card className="bg-white/10 backdrop-blur-md border border-white/20 hover:border-cyan-400/50 transition-all duration-300">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Total Courses</CardTitle>
-                  <BookOpen className="h-4 w-4 text-muted-foreground" />
+                  <CardTitle className="text-sm font-medium text-slate-300">Total Courses</CardTitle>
+                  <div className="p-2 bg-gradient-to-br from-cyan-400/20 to-cyan-600/20 rounded-lg">
+                    <BookOpen className="h-4 w-4 text-cyan-400" />
+                  </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{totalCourses}</div>
-                  <p className="text-xs text-muted-foreground">
+                  <div className="text-2xl font-bold text-white">{totalCourses}</div>
+                  <p className="text-xs text-slate-400">
                     +2 from last month
                   </p>
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="bg-white/10 backdrop-blur-md border border-white/20 hover:border-purple-400/50 transition-all duration-300">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Completed</CardTitle>
-                  <Award className="h-4 w-4 text-muted-foreground" />
+                  <CardTitle className="text-sm font-medium text-slate-300">Completed</CardTitle>
+                  <div className="p-2 bg-gradient-to-br from-purple-400/20 to-purple-600/20 rounded-lg">
+                    <Award className="h-4 w-4 text-purple-400" />
+                  </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{completedCourses.length}</div>
-                  <p className="text-xs text-muted-foreground">
+                  <div className="text-2xl font-bold text-white">{completedCourses.length}</div>
+                  <p className="text-xs text-slate-400">
                     {completionRate.toFixed(0)}% completion rate
                   </p>
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="bg-white/10 backdrop-blur-md border border-white/20 hover:border-yellow-400/50 transition-all duration-300">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Learning Hours</CardTitle>
-                  <User className="h-4 w-4 text-muted-foreground" />
+                  <CardTitle className="text-sm font-medium text-slate-300">Learning Hours</CardTitle>
+                  <div className="p-2 bg-gradient-to-br from-yellow-400/20 to-yellow-600/20 rounded-lg">
+                    <Trophy className="h-4 w-4 text-yellow-400" />
+                  </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">24</div>
-                  <p className="text-xs text-muted-foreground">
+                  <div className="text-2xl font-bold text-white">24</div>
+                  <p className="text-xs text-slate-400">
                     This month
                   </p>
                 </CardContent>
@@ -219,19 +240,27 @@ const StudentProfile = () => {
             </div>
 
             {/* Progress Chart */}
-            <Card>
+            <Card className="bg-white/10 backdrop-blur-md border border-white/20">
               <CardHeader>
-                <CardTitle>Learning Progress</CardTitle>
+                <CardTitle className="text-white flex items-center">
+                  <Target className="w-5 h-5 mr-2 text-cyan-400" />
+                  Learning Progress
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   {enrolledCourses.map((course) => (
                     <div key={course._id} className="space-y-2">
                       <div className="flex justify-between text-sm">
-                        <span>{course.title}</span>
-                        <span>{course.progress}%</span>
+                        <span className="text-white">{course.title}</span>
+                        <span className="text-cyan-400 font-medium">{course.progress}%</span>
                       </div>
-                      <Progress value={course.progress} className="h-2" />
+                      <div className="bg-slate-700 rounded-full h-2 overflow-hidden">
+                        <div 
+                          className="h-full bg-gradient-to-r from-cyan-400 to-purple-500 transition-all duration-500"
+                          style={{ width: `${course.progress}%` }}
+                        ></div>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -242,7 +271,7 @@ const StudentProfile = () => {
           <TabsContent value="courses" className="space-y-6">
             <div className="grid md:grid-cols-2 gap-6">
               {enrolledCourses.map((course) => (
-                <Card key={course._id}>
+                <Card key={course._id} className="bg-white/10 backdrop-blur-md border border-white/20 hover:border-cyan-400/30 transition-all duration-300">
                   <div className="flex">
                     <img 
                       src={course.image} 
@@ -250,14 +279,17 @@ const StudentProfile = () => {
                       className="w-32 h-24 object-cover rounded-l-lg"
                     />
                     <div className="flex-1 p-4">
-                      <h3 className="font-semibold text-gray-900 mb-1">{course.title}</h3>
-                      <p className="text-sm text-gray-600 mb-2">by {course.instructor}</p>
+                      <h3 className="font-semibold text-white mb-1">{course.title}</h3>
+                      <p className="text-sm text-slate-400 mb-2">by {course.instructor}</p>
                       
                       <div className="flex items-center justify-between">
-                        <Badge variant={course.completed ? "default" : "secondary"}>
+                        <Badge className={course.completed 
+                          ? "bg-green-500/20 text-green-400 border-green-500/30" 
+                          : "bg-cyan-500/20 text-cyan-400 border-cyan-500/30"
+                        }>
                           {course.completed ? 'Completed' : 'In Progress'}
                         </Badge>
-                        <span className="text-sm text-gray-500">{course.progress}%</span>
+                        <span className="text-sm text-cyan-400 font-medium">{course.progress}%</span>
                       </div>
                     </div>
                   </div>
@@ -267,78 +299,94 @@ const StudentProfile = () => {
           </TabsContent>
 
           <TabsContent value="settings" className="space-y-6">
-            <Card>
+            <Card className="bg-white/10 backdrop-blur-md border border-white/20">
               <CardHeader>
-                <CardTitle>Personal Information</CardTitle>
+                <CardTitle className="text-white">Personal Information</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 {isEditing ? (
                   <>
                     <div>
-                      <Label htmlFor="name">Full Name</Label>
+                      <Label htmlFor="name" className="text-slate-300">Full Name</Label>
                       <Input
                         id="name"
                         value={profileData.name}
                         onChange={(e) => setProfileData({...profileData, name: e.target.value})}
+                        className="bg-white/5 border-white/20 text-white placeholder:text-slate-400"
                       />
                     </div>
                     <div>
-                      <Label htmlFor="profileImage">Profile Image URL</Label>
+                      <Label htmlFor="profileImage" className="text-slate-300">Profile Image URL</Label>
                       <Input
                         id="profileImage"
                         value={profileData.profileImage}
                         onChange={(e) => setProfileData({...profileData, profileImage: e.target.value})}
+                        className="bg-white/5 border-white/20 text-white placeholder:text-slate-400"
                       />
                     </div>
-                    <Button onClick={handleSave}>Save Changes</Button>
+                    <Button 
+                      onClick={handleSave}
+                      className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 text-white border-0"
+                    >
+                      Save Changes
+                    </Button>
                   </>
                 ) : (
-                  <div>
-                    <Label>Full Name</Label>
-                    <p>{profileData.name}</p>
-                    <Label>Email</Label>
-                    <p>{profileData.email}</p>
-                    <Label>Date Joined</Label>
-                    <p>{profileData.joined}</p>
+                  <div className="space-y-4">
+                    <div>
+                      <Label className="text-slate-300">Full Name</Label>
+                      <p className="text-white">{profileData.name}</p>
+                    </div>
+                    <div>
+                      <Label className="text-slate-300">Email</Label>
+                      <p className="text-white">{profileData.email}</p>
+                    </div>
+                    <div>
+                      <Label className="text-slate-300">Date Joined</Label>
+                      <p className="text-white">{profileData.joined}</p>
+                    </div>
                   </div>
                 )}
               </CardContent>
             </Card>
 
             {/* Password Update Section */}
-            <Card>
+            <Card className="bg-white/10 backdrop-blur-md border border-white/20">
               <CardHeader>
-                <CardTitle>Change Password</CardTitle>
+                <CardTitle className="text-white">Change Password</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <Label htmlFor="oldPassword">Old Password</Label>
+                  <Label htmlFor="oldPassword" className="text-slate-300">Old Password</Label>
                   <Input
                     id="oldPassword"
                     type="password"
                     value={oldPassword}
                     onChange={(e) => setOldPassword(e.target.value)}
                     placeholder="Enter your current password"
+                    className="bg-white/5 border-white/20 text-white placeholder:text-slate-400"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="newPassword">New Password</Label>
+                  <Label htmlFor="newPassword" className="text-slate-300">New Password</Label>
                   <Input
                     id="newPassword"
                     type="password"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     placeholder="Enter new password"
+                    className="bg-white/5 border-white/20 text-white placeholder:text-slate-400"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="confirmPassword">Confirm New Password</Label>
+                  <Label htmlFor="confirmPassword" className="text-slate-300">Confirm New Password</Label>
                   <Input
                     id="confirmPassword"
                     type="password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     placeholder="Confirm new password"
+                    className="bg-white/5 border-white/20 text-white placeholder:text-slate-400"
                   />
                 </div>
                 <Button
@@ -381,6 +429,7 @@ const StudentProfile = () => {
                       });
                     }
                   }}
+                  className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 text-white border-0"
                 >
                   Update Password
                 </Button>

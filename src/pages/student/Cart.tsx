@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Trash2, Users, Clock, ShoppingBag, Eye } from 'lucide-react';
+import { Trash2, Users, Clock, ShoppingBag, Eye, Sparkles, CreditCard } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 
@@ -14,7 +14,6 @@ const Cart = () => {
   const [cartItems, setCartItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch cart items from backend
   useEffect(() => {
     const fetchCart = async () => {
       setLoading(true);
@@ -40,7 +39,6 @@ const Cart = () => {
     fetchCart();
   }, [toast]);
 
-  // Remove course from cart (backend)
   const removeFromCart = async (courseId: string) => {
     try {
       const res = await fetch(`${SERVER_URL}/api/cart/${courseId}`, {
@@ -71,7 +69,6 @@ const Cart = () => {
 
   const total = cartItems.reduce((sum, item) => sum + (item.price || 0), 0);
 
-  // Checkout (backend)
   const handleCheckout = async () => {
     try {
       const res = await fetch(`${SERVER_URL}/api/cart/checkout`, {
@@ -100,30 +97,55 @@ const Cart = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">Shopping Cart</h1>
-          <p className="text-gray-600">
-            {cartItems.length} {cartItems.length === 1 ? 'course' : 'courses'} in your cart
-          </p>
+        <div className="mb-8 animate-fade-in">
+          <div className="relative">
+            <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 rounded-2xl blur-xl"></div>
+            <div className="relative bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-8">
+              <div className="flex items-center space-x-4">
+                <div className="w-16 h-16 bg-gradient-to-br from-cyan-400 to-purple-500 rounded-full flex items-center justify-center animate-glow">
+                  <ShoppingBag className="w-8 h-8 text-white" />
+                </div>
+                <div>
+                  <h1 className="text-4xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
+                    Shopping Cart
+                  </h1>
+                  <p className="text-slate-300 text-lg mt-2">
+                    {cartItems.length} {cartItems.length === 1 ? 'course' : 'courses'} in your cart
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         {loading ? (
-          <div className="text-center py-16">Loading...</div>
+          <div className="text-center py-16">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-400 mx-auto"></div>
+            <p className="text-slate-300 mt-2">Loading...</p>
+          </div>
         ) : cartItems.length === 0 ? (
           <div className="text-center py-16">
-            <ShoppingBag className="w-24 h-24 text-gray-400 mx-auto mb-6" />
-            <h3 className="text-2xl font-semibold text-gray-900 mb-4">Your cart is empty</h3>
-            <p className="text-gray-600 mb-8">Browse our courses and add them to your cart to get started.</p>
-            <Button size="lg" onClick={() => navigate('/courses')}>Browse Courses</Button>
+            <div className="w-24 h-24 bg-gradient-to-br from-cyan-400/20 to-purple-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+              <ShoppingBag className="w-12 h-12 text-cyan-400" />
+            </div>
+            <h3 className="text-2xl font-semibold text-white mb-4">Your cart is empty</h3>
+            <p className="text-slate-400 mb-8">Browse our courses and add them to your cart to get started.</p>
+            <Button 
+              size="lg" 
+              onClick={() => navigate('/courses')}
+              className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 text-white border-0"
+            >
+              Browse Courses
+            </Button>
           </div>
         ) : (
           <div className="grid lg:grid-cols-3 gap-8">
             {/* Cart Items */}
             <div className="lg:col-span-2 space-y-6">
               {cartItems.map((course) => (
-                <Card key={course._id || course.id}>
+                <Card key={course._id || course.id} className="bg-white/10 backdrop-blur-md border border-white/20 hover:border-cyan-400/30 transition-all duration-300">
                   <div className="flex">
                     <img 
                       src={course.image} 
@@ -133,11 +155,11 @@ const Cart = () => {
                     <div className="flex-1 p-6">
                       <div className="flex justify-between items-start mb-4">
                         <div>
-                          <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                          <h3 className="text-xl font-semibold text-white mb-2 hover:text-cyan-400 transition-colors">
                             {course.title}
                           </h3>
-                          <p className="text-gray-600 mb-2">by {course.instructor || course.educatorId?.name}</p>
-                          <p className="text-gray-700 text-sm line-clamp-2">
+                          <p className="text-slate-400 mb-2">by {course.instructor || course.educatorId?.name}</p>
+                          <p className="text-slate-300 text-sm line-clamp-2">
                             {course.description}
                           </p>
                         </div>
@@ -146,7 +168,7 @@ const Cart = () => {
                             variant="ghost" 
                             size="sm"
                             onClick={() => viewCourseDetails(course._id || course.id)}
-                            className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                            className="text-cyan-400 hover:text-cyan-300 hover:bg-cyan-400/10"
                           >
                             <Eye className="w-4 h-4" />
                           </Button>
@@ -154,7 +176,7 @@ const Cart = () => {
                             variant="ghost" 
                             size="sm"
                             onClick={() => removeFromCart(course._id || course.id)}
-                            className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                            className="text-red-400 hover:text-red-300 hover:bg-red-400/10"
                           >
                             <Trash2 className="w-4 h-4" />
                           </Button>
@@ -162,7 +184,7 @@ const Cart = () => {
                       </div>
 
                       <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-4 text-sm text-gray-500">
+                        <div className="flex items-center space-x-4 text-sm text-slate-400">
                           <div className="flex items-center">
                             <Users className="w-4 h-4 mr-1" />
                             {course.students}
@@ -172,7 +194,7 @@ const Cart = () => {
                             {course.duration}
                           </div>
                         </div>
-                        <div className="text-2xl font-bold text-blue-600">
+                        <div className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
                           ${course.price}
                         </div>
                       </div>
@@ -184,37 +206,44 @@ const Cart = () => {
 
             {/* Order Summary */}
             <div className="lg:col-span-1">
-              <Card className="sticky top-6">
+              <Card className="sticky top-6 bg-white/10 backdrop-blur-md border border-white/20">
                 <CardHeader>
-                  <CardTitle>Order Summary</CardTitle>
+                  <CardTitle className="text-white flex items-center">
+                    <CreditCard className="w-5 h-5 mr-2 text-cyan-400" />
+                    Order Summary
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
                     <div className="flex justify-between text-sm">
-                      <span>Subtotal</span>
-                      <span>${total.toFixed(2)}</span>
+                      <span className="text-slate-300">Subtotal</span>
+                      <span className="text-white">${total.toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between text-sm">
-                      <span>Tax</span>
-                      <span>$0.00</span>
+                      <span className="text-slate-300">Tax</span>
+                      <span className="text-white">$0.00</span>
                     </div>
-                    <div className="border-t pt-4">
+                    <div className="border-t border-white/20 pt-4">
                       <div className="flex justify-between font-semibold text-lg">
-                        <span>Total</span>
-                        <span>${total.toFixed(2)}</span>
+                        <span className="text-white">Total</span>
+                        <span className="bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
+                          ${total.toFixed(2)}
+                        </span>
                       </div>
                     </div>
 
                     <Button 
-                      className="w-full mt-6" 
+                      className="w-full mt-6 bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 text-white border-0" 
                       size="lg"
                       onClick={handleCheckout}
                     >
+                      <CreditCard className="w-4 h-4 mr-2" />
                       Checkout
                     </Button>
 
                     <div className="text-center">
-                      <Badge variant="outline" className="text-green-600 border-green-600">
+                      <Badge className="bg-green-500/20 text-green-400 border-green-500/30">
+                        <Sparkles className="w-3 h-3 mr-1" />
                         30-day money-back guarantee
                       </Badge>
                     </div>
