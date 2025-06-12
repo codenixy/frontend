@@ -1,10 +1,10 @@
-import { useState } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
+import { useState } from "react";
 import Navbar from "./components/Navbar";
 import Sidebar from "./components/Sidebar";
 import Footer from "./components/Footer";
@@ -47,6 +47,8 @@ import EditCourse from "./pages/educator/EditCourse";
 import EditModule from "./pages/educator/EditModule";
 import EditVideo from "./pages/educator/EditVideo";
 import ForgotPassword from "./pages/ForgotPassword";
+
+import "./index.css";
 
 const queryClient = new QueryClient();
 
@@ -93,182 +95,182 @@ const PublicRoute = ({ children }: { children: React.ReactNode }) => {
 };
 
 const AppContent = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-      <Navbar toggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} />
-      <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-      
-      <main className={`flex-1 transition-all duration-300 ${isSidebarOpen ? 'lg:ml-64' : 'lg:ml-20'}`}>
-        <Routes>
-          {/* Public Routes */}
-          <Route path="/" element={<Landing />} />
-          <Route path="/courses" element={<Courses />} />
-          <Route path="/courses/:courseId" element={<CourseDetails />} />
-          {/* <Route path="/GoogleAuthCallback" element={<GoogleAuthCallback />} /> */}
+      <Navbar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
+      <div className="flex flex-1">
+        <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
+        <main className="flex-1 lg:ml-64 transition-all duration-300">
+          <div className="container mx-auto">
+            <Routes>
+              {/* Public Routes */}
+              <Route path="/" element={<Landing />} />
+              <Route path="/courses" element={<Courses />} />
+              <Route path="/courses/:courseId" element={<CourseDetails />} />
+              {/* <Route path="/GoogleAuthCallback" element={<GoogleAuthCallback />} /> */}
 
-          {/* Auth Routes */}
-          <Route path="/login" element={
-            <PublicRoute>
-              <Login />
-            </PublicRoute>
-          } />
-          <Route path="/signup" element={
-            <PublicRoute>
-              <Signup />
-            </PublicRoute>
-          } />
-          <Route path="/forgot-password" element={
-            <PublicRoute>
-              <ForgotPassword />
-            </PublicRoute>
-          } />
-          
-          {/* Student Routes */}
-          <Route path="/student" element={
-            <ProtectedRoute allowedRoles={['student']}>
-              <StudentDashboard />
-            </ProtectedRoute>
-          } />
-          <Route path="/my-learning" element={
-            <ProtectedRoute allowedRoles={['student']}>
-              <MyLearning />
-            </ProtectedRoute>
-          } />
-          <Route path="/course/:courseId" element={
-            <ProtectedRoute allowedRoles={['student']}>
-              <CourseContent />
-            </ProtectedRoute>
-          } />
-          <Route path="/course/:courseId/video/:videoId" element={
-            <ProtectedRoute allowedRoles={['student']}>
-              <CoursePlayer />
-            </ProtectedRoute>
-          } />
-          <Route path="/cart" element={
-            <ProtectedRoute allowedRoles={['student']}>
-              <Cart />
-            </ProtectedRoute>
-          } />
-          <Route path="/student/profile" element={
-            <ProtectedRoute allowedRoles={['student']}>
-              <StudentProfile />
-            </ProtectedRoute>
-          } />
-          
-          {/* Admin Routes */}
-          <Route path="/admin" element={
-            <ProtectedRoute allowedRoles={['admin']}>
-              <AdminDashboard />
-            </ProtectedRoute>
-          } />
-          <Route path="/admin/students" element={
-            <ProtectedRoute allowedRoles={['admin']}>
-              <StudentAnalytics />
-            </ProtectedRoute>
-          } />
-          <Route path="/admin/students/:studentId" element={
-            <ProtectedRoute allowedRoles={['admin']}>
-              <StudentDetail />
-            </ProtectedRoute>
-          } />
-          <Route path="/admin/educators" element={
-            <ProtectedRoute allowedRoles={['admin']}>
-              <EducatorAnalytics />
-            </ProtectedRoute>
-          } />
-          <Route path="/admin/educators/add" element={
-            <ProtectedRoute allowedRoles={['admin']}>
-              <AddEducator />
-            </ProtectedRoute>
-          } />
-          <Route path="/admin/educators/:educatorId" element={
-            <ProtectedRoute allowedRoles={['admin']}>
-              <EducatorDetail />
-            </ProtectedRoute>
-          } />
-          <Route path="/admin/courses" element={
-            <ProtectedRoute allowedRoles={['admin']}>
-              <CourseAnalytics />
-            </ProtectedRoute>
-          } />
-          <Route path="/admin/courses/:courseId" element={
-            <ProtectedRoute allowedRoles={['admin']}>
-              <CourseDetail />
-            </ProtectedRoute>
-          } />
-          <Route path="/admin/profile" element={
-            <ProtectedRoute allowedRoles={['admin']}>
-              <AdminProfile />
-            </ProtectedRoute>
-          } />
-          
-          {/* Educator Routes */}
-          <Route path="/educator" element={
-            <ProtectedRoute allowedRoles={['educator']}>
-              <EducatorDashboard />
-            </ProtectedRoute>
-          } />
-          <Route path="/educator/add-course" element={
-            <ProtectedRoute allowedRoles={['educator']}>
-              <AddCourse />
-            </ProtectedRoute>
-          } />
-          <Route path="/educator/courses" element={
-            <ProtectedRoute allowedRoles={['educator']}>
-              <MyCourses />
-            </ProtectedRoute>
-          } />
-          <Route path="/educator/courses/:courseId" element={
-            <ProtectedRoute allowedRoles={['educator']}>
-              <EducatorCourseDetail />
-            </ProtectedRoute>
-          } />
-          <Route path="/educator/courses/:courseId/edit" element={
-            <ProtectedRoute allowedRoles={['educator']}>
-              <EditCourse />
-            </ProtectedRoute>
-          } />
-          <Route path="/educator/courses/:courseId/modules/:moduleId/edit" element={
-            <ProtectedRoute allowedRoles={['educator']}>
-              <EditModule />
-            </ProtectedRoute>
-          } />
-          <Route path="/educator/courses/:courseId/add-module" element={
-            <ProtectedRoute allowedRoles={['educator']}>
-              <AddModule />
-            </ProtectedRoute>
-          } />
-          <Route path="/educator/courses/:courseId/modules/:moduleId/add-video" element={
-            <ProtectedRoute allowedRoles={['educator']}>
-              <AddVideo />
-            </ProtectedRoute>
-          } />
-          <Route path="/educator/courses/:courseId/modules/:moduleId/videos/:videoId/edit" element={
-            <ProtectedRoute allowedRoles={['educator']}>
-              <EditVideo />
-            </ProtectedRoute>
-          } />
-          <Route path="/educator/students" element={
-            <ProtectedRoute allowedRoles={['educator']}>
-              <EducatorStudentAnalytics />
-            </ProtectedRoute>
-          } />
-          <Route path="/educator/profile" element={
-            <ProtectedRoute allowedRoles={['educator']}>
-              <EducatorProfile />
-            </ProtectedRoute>
-          } />
-          
-          {/* Catch all route */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </main>
+              {/* Auth Routes */}
+              <Route path="/login" element={
+                <PublicRoute>
+                  <Login />
+                </PublicRoute>
+              } />
+              <Route path="/signup" element={
+                <PublicRoute>
+                  <Signup />
+                </PublicRoute>
+              } />
+              <Route path="/forgot-password" element={
+                <PublicRoute>
+                  <ForgotPassword />
+                </PublicRoute>
+              } />
+              
+              {/* Student Routes */}
+              <Route path="/student" element={
+                <ProtectedRoute allowedRoles={['student']}>
+                  <StudentDashboard />
+                </ProtectedRoute>
+              } />
+              <Route path="/my-learning" element={
+                <ProtectedRoute allowedRoles={['student']}>
+                  <MyLearning />
+                </ProtectedRoute>
+              } />
+              <Route path="/course/:courseId" element={
+                <ProtectedRoute allowedRoles={['student']}>
+                  <CourseContent />
+                </ProtectedRoute>
+              } />
+              <Route path="/course/:courseId/video/:videoId" element={
+                <ProtectedRoute allowedRoles={['student']}>
+                  <CoursePlayer />
+                </ProtectedRoute>
+              } />
+              <Route path="/cart" element={
+                <ProtectedRoute allowedRoles={['student']}>
+                  <Cart />
+                </ProtectedRoute>
+              } />
+              <Route path="/student/profile" element={
+                <ProtectedRoute allowedRoles={['student']}>
+                  <StudentProfile />
+                </ProtectedRoute>
+              } />
+              
+              {/* Admin Routes */}
+              <Route path="/admin" element={
+                <ProtectedRoute allowedRoles={['admin']}>
+                  <AdminDashboard />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/students" element={
+                <ProtectedRoute allowedRoles={['admin']}>
+                  <StudentAnalytics />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/students/:studentId" element={
+                <ProtectedRoute allowedRoles={['admin']}>
+                  <StudentDetail />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/educators" element={
+                <ProtectedRoute allowedRoles={['admin']}>
+                  <EducatorAnalytics />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/educators/add" element={
+                <ProtectedRoute allowedRoles={['admin']}>
+                  <AddEducator />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/educators/:educatorId" element={
+                <ProtectedRoute allowedRoles={['admin']}>
+                  <EducatorDetail />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/courses" element={
+                <ProtectedRoute allowedRoles={['admin']}>
+                  <CourseAnalytics />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/courses/:courseId" element={
+                <ProtectedRoute allowedRoles={['admin']}>
+                  <CourseDetail />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/profile" element={
+                <ProtectedRoute allowedRoles={['admin']}>
+                  <AdminProfile />
+                </ProtectedRoute>
+              } />
+              
+              {/* Educator Routes */}
+              <Route path="/educator" element={
+                <ProtectedRoute allowedRoles={['educator']}>
+                  <EducatorDashboard />
+                </ProtectedRoute>
+              } />
+              <Route path="/educator/add-course" element={
+                <ProtectedRoute allowedRoles={['educator']}>
+                  <AddCourse />
+                </ProtectedRoute>
+              } />
+              <Route path="/educator/courses" element={
+                <ProtectedRoute allowedRoles={['educator']}>
+                  <MyCourses />
+                </ProtectedRoute>
+              } />
+              <Route path="/educator/courses/:courseId" element={
+                <ProtectedRoute allowedRoles={['educator']}>
+                  <EducatorCourseDetail />
+                </ProtectedRoute>
+              } />
+              <Route path="/educator/courses/:courseId/edit" element={
+                <ProtectedRoute allowedRoles={['educator']}>
+                  <EditCourse />
+                </ProtectedRoute>
+              } />
+              <Route path="/educator/courses/:courseId/modules/:moduleId/edit" element={
+                <ProtectedRoute allowedRoles={['educator']}>
+                  <EditModule />
+                </ProtectedRoute>
+              } />
+              <Route path="/educator/courses/:courseId/add-module" element={
+                <ProtectedRoute allowedRoles={['educator']}>
+                  <AddModule />
+                </ProtectedRoute>
+              } />
+              <Route path="/educator/courses/:courseId/modules/:moduleId/add-video" element={
+                <ProtectedRoute allowedRoles={['educator']}>
+                  <AddVideo />
+                </ProtectedRoute>
+              } />
+              <Route path="/educator/courses/:courseId/modules/:moduleId/videos/:videoId/edit" element={
+                <ProtectedRoute allowedRoles={['educator']}>
+                  <EditVideo />
+                </ProtectedRoute>
+              } />
+              <Route path="/educator/students" element={
+                <ProtectedRoute allowedRoles={['educator']}>
+                  <EducatorStudentAnalytics />
+                </ProtectedRoute>
+              } />
+              <Route path="/educator/profile" element={
+                <ProtectedRoute allowedRoles={['educator']}>
+                  <EducatorProfile />
+                </ProtectedRoute>
+              } />
+              
+              {/* Catch all route */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </div>
+        </main>
+      </div>
       <Footer />
     </div>
   );
@@ -279,11 +281,11 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-        <AuthProvider>
-      <BrowserRouter>
+      <AuthProvider>
+        <BrowserRouter>
           <AppContent />
-      </BrowserRouter>
-        </AuthProvider>
+        </BrowserRouter>
+      </AuthProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );

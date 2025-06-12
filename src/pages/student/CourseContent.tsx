@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
-import { PlayCircle, Clock, CheckCircle, Lock, ArrowLeft, BookOpen, Sparkles } from 'lucide-react';
+import { PlayCircle, Clock, CheckCircle, Lock, ArrowLeft, BookOpen, Award } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 
@@ -71,10 +71,11 @@ const CourseContent = () => {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-white mb-4">Course not found</h2>
+          <h2 className="text-2xl font-bold text-white mb-2">Course not found</h2>
+          <p className="text-cyan-200/80 mb-4">The course you're looking for doesn't exist.</p>
           <Button 
             onClick={() => navigate('/courses')}
-            className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 text-white border-0"
+            className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-400 hover:to-purple-400 text-white border-0"
           >
             Browse Courses
           </Button>
@@ -98,14 +99,14 @@ const CourseContent = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Back Button */}
         <div className="mb-6">
           <Button 
             variant="ghost" 
             onClick={() => navigate('/my-learning')}
-            className="text-cyan-400 hover:text-cyan-300 hover:bg-white/5"
+            className="flex items-center text-cyan-400 hover:text-cyan-300 hover:bg-white/5"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to My Learning
@@ -113,62 +114,50 @@ const CourseContent = () => {
         </div>
 
         {/* Course Header */}
-        <div className="mb-8 animate-fade-in">
-          <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 rounded-2xl blur-xl"></div>
-            <div className="relative bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-8">
-              <div className="flex flex-col md:flex-row md:items-start gap-6">
-                <div className="relative">
-                  <img 
-                    src={course.image} 
-                    alt={course.title}
-                    className="w-full md:w-64 h-40 object-cover rounded-lg border border-white/20"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent rounded-lg"></div>
-                </div>
-                
-                <div className="flex-1">
-                  <h1 className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent mb-2">
-                    {course.title}
-                  </h1>
-                  <p className="text-slate-300 mb-4">{course.description}</p>
+        <div className="mb-8">
+          <Card className="bg-white/10 backdrop-blur-md border border-white/20 overflow-hidden">
+            <CardContent className="p-0">
+              <div className="relative">
+                <img 
+                  src={course.image} 
+                  alt={course.title}
+                  className="w-full h-48 object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+                <div className="absolute bottom-0 left-0 right-0 p-6">
+                  <h1 className="text-3xl font-bold text-white mb-2">{course.title}</h1>
+                  <p className="text-cyan-200/80 mb-2">{course.description}</p>
                   <p className="text-lg text-cyan-400 mb-4">by {course.instructor || course.educatorId?.name}</p>
                   
-                  <div className="flex flex-wrap items-center gap-4 mb-4">
-                    <Badge className="bg-white/10 text-white border-white/20 px-3 py-1">
-                      {course.duration}
-                    </Badge>
-                    <Badge className="bg-white/10 text-white border-white/20 px-3 py-1">
-                      {course.modules?.length || 0} modules
-                    </Badge>
-                    <Badge className="bg-white/10 text-white border-white/20 px-3 py-1">
-                      {totalVideos} videos
-                    </Badge>
+                  <div className="flex items-center space-x-4 mb-4">
+                    <Badge className="bg-cyan-500/20 text-cyan-300 border-cyan-400/30">{course.duration}</Badge>
+                    <Badge className="bg-purple-500/20 text-purple-300 border-purple-400/30">{course.modules?.length || 0} modules</Badge>
+                    <Badge className="bg-yellow-500/20 text-yellow-300 border-yellow-400/30">{totalVideos} videos</Badge>
                   </div>
-
-                  <div className="mb-6">
-                    <div className="flex justify-between text-sm mb-1">
-                      <span className="text-slate-300">Course Progress</span>
-                      <span className="text-cyan-400">{Math.round(progress)}%</span>
-                    </div>
-                    <div className="bg-slate-700 rounded-full h-2 overflow-hidden">
-                      <div 
-                        className="h-full bg-gradient-to-r from-cyan-400 to-purple-500 transition-all duration-500"
-                        style={{ width: `${progress}%` }}
-                      ></div>
-                    </div>
-                  </div>
-
-                  <Button 
-                    onClick={handleStartCourse} 
-                    className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 text-white border-0"
-                  >
-                    {progress > 0 ? 'Continue Learning' : 'Start Course'}
-                  </Button>
                 </div>
               </div>
-            </div>
-          </div>
+
+              <div className="p-6 pt-0">
+                <div className="mb-6">
+                  <div className="flex justify-between text-sm mb-1">
+                    <span className="text-cyan-200/80">Course Progress</span>
+                    <span className="text-cyan-400 font-medium">{Math.round(progress)}%</span>
+                  </div>
+                  <Progress value={progress} className="h-3 bg-slate-700">
+                    <div className="h-full bg-gradient-to-r from-cyan-400 to-purple-500 rounded-full"></div>
+                  </Progress>
+                </div>
+
+                <Button 
+                  onClick={handleStartCourse} 
+                  size="lg"
+                  className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-400 hover:to-purple-400 text-white border-0"
+                >
+                  {progress > 0 ? 'Continue Learning' : 'Start Course'}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Course Modules */}
@@ -177,15 +166,15 @@ const CourseContent = () => {
             <Card key={module._id || module.id} className="bg-white/10 backdrop-blur-md border border-white/20 hover:border-cyan-400/30 transition-all duration-300">
               <CardHeader>
                 <CardTitle className="flex items-center justify-between text-white">
-                  <div className="flex items-center">
-                    <Sparkles className="w-5 h-5 mr-2 text-cyan-400" />
-                    <span>Module {moduleIndex + 1}: {module.title}</span>
-                  </div>
-                  <Badge className="bg-white/10 text-white border-white/20">
+                  <span className="flex items-center">
+                    <BookOpen className="w-5 h-5 mr-2 text-cyan-400" />
+                    Module {moduleIndex + 1}: {module.title}
+                  </span>
+                  <Badge className="bg-cyan-500/20 text-cyan-300 border-cyan-400/30">
                     {module.videos?.filter((v: any) => watchedVideos.includes(v._id || v.id)).length}/{module.videos?.length || 0} completed
                   </Badge>
                 </CardTitle>
-                <p className="text-slate-300">{module.description}</p>
+                <p className="text-cyan-200/80">{module.description}</p>
               </CardHeader>
               
               <CardContent>
@@ -202,52 +191,44 @@ const CourseContent = () => {
                     return (
                       <div 
                         key={videoId}
-                        className={`flex items-center justify-between p-4 rounded-lg border cursor-pointer transition-all duration-300 ${
-                          isWatched 
-                            ? 'bg-green-500/10 border-green-500/30 hover:bg-green-500/20' 
-                            : isLocked 
-                              ? 'bg-white/5 border-white/10 cursor-not-allowed opacity-70' 
-                              : 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-cyan-400/30'
-                        }`}
+                        className={`course-video-item ${isWatched ? 'completed' : ''} ${isLocked ? 'opacity-60 cursor-not-allowed' : ''}`}
                         onClick={() => !isLocked && handleWatchVideo(videoId)}
                       >
-                        <div className="flex items-center space-x-3">
-                          {isWatched ? (
-                            <CheckCircle className="w-6 h-6 text-green-400" />
-                          ) : isLocked ? (
-                            <Lock className="w-6 h-6 text-slate-400" />
-                          ) : (
-                            <PlayCircle className="w-6 h-6 text-cyan-400" />
-                          )}
-                          
-                          <div>
-                            <h4 className={`font-medium ${isLocked ? 'text-slate-400' : 'text-white'}`}>
-                              {video.title}
-                            </h4>
-                            <div className="flex items-center text-sm text-slate-400">
-                              <Clock className="w-4 h-4 mr-1" />
-                              {video.duration}
+                        <div className="flex items-center justify-between w-full">
+                          <div className="flex items-center space-x-3">
+                            {isWatched ? (
+                              <CheckCircle className="w-6 h-6 text-green-400" />
+                            ) : isLocked ? (
+                              <Lock className="w-6 h-6 text-slate-400" />
+                            ) : (
+                              <PlayCircle className="w-6 h-6 text-cyan-400" />
+                            )}
+                            
+                            <div>
+                              <h4 className={`font-medium text-white ${isLocked ? 'text-slate-400' : ''}`}>
+                                {video.title}
+                              </h4>
+                              <div className="flex items-center text-sm text-slate-400">
+                                <Clock className="w-4 h-4 mr-1" />
+                                {video.duration}
+                              </div>
                             </div>
                           </div>
-                        </div>
 
-                        <Button 
-                          variant={isWatched ? "outline" : "default"}
-                          disabled={isLocked}
-                          size="sm"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            if (!isLocked) handleWatchVideo(videoId);
-                          }}
-                          className={isWatched 
-                            ? "border-green-500/30 text-green-400 hover:bg-green-500/10" 
-                            : isLocked 
-                              ? "bg-slate-700/50 text-slate-400" 
-                              : "bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 text-white border-0"
-                          }
-                        >
-                          {isWatched ? 'Rewatch' : isLocked ? 'Locked' : 'Watch'}
-                        </Button>
+                          <Button 
+                            variant={isWatched ? "outline" : "default"}
+                            disabled={isLocked}
+                            size="sm"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if (!isLocked) handleWatchVideo(videoId);
+                            }}
+                            className={isWatched ? "border-green-400/30 text-green-400 hover:bg-green-400/10" : 
+                              "bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-400 hover:to-purple-400 text-white border-0"}
+                          >
+                            {isWatched ? 'Rewatch' : isLocked ? 'Locked' : 'Watch'}
+                          </Button>
+                        </div>
                       </div>
                     );
                   })}
@@ -257,11 +238,11 @@ const CourseContent = () => {
           )) : (
             <Card className="bg-white/10 backdrop-blur-md border border-white/20">
               <CardContent className="text-center py-16">
-                <div className="w-20 h-20 bg-gradient-to-br from-cyan-400/20 to-purple-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <BookOpen className="w-10 h-10 text-cyan-400" />
+                <div className="w-20 h-20 bg-gradient-to-br from-cyan-400/20 to-purple-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Award className="w-10 h-10 text-cyan-400" />
                 </div>
                 <h3 className="text-xl font-semibold text-white mb-2">No modules available</h3>
-                <p className="text-slate-300 mb-6">This course doesn't have any modules yet. Check back later!</p>
+                <p className="text-cyan-200/80">This course doesn't have any modules yet. Check back later!</p>
               </CardContent>
             </Card>
           )}

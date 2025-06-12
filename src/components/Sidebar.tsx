@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
+import { Button } from '@/components/ui/button';
 import {
-  BookOpen, Users, GraduationCap, ShoppingCart, Home, 
-  BookMarked, Award, Settings, ChevronLeft, ChevronRight,
-  LayoutDashboard, Library, Video, UserPlus, Sparkles
+  BookOpen, Users, GraduationCap, Award, Settings, 
+  BarChart2, ShoppingCart, BookMarked, PlusCircle, 
+  User, Home, Menu, X
 } from 'lucide-react';
 
-type SidebarProps = {
+interface SidebarProps {
   isOpen: boolean;
   toggleSidebar: () => void;
-};
+}
 
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
   const { user } = useAuth();
@@ -27,68 +27,108 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  // Close sidebar on mobile when navigating
+  useEffect(() => {
+    if (isMobile && isOpen) {
+      toggleSidebar();
+    }
+  }, [location.pathname, isMobile]);
+
   const isActive = (path: string) => {
     return location.pathname === path || location.pathname.startsWith(`${path}/`);
   };
 
-  const renderNavLinks = () => {
-    // Public links (when not logged in)
-    if (!user) {
-      return (
-        <>
-          <NavItem to="/" icon={<Home />} label="Home" active={isActive('/')} />
-          <NavItem to="/courses" icon={<BookOpen />} label="Courses" active={isActive('/courses')} />
-          <NavItem to="/login" icon={<BookMarked />} label="Login" active={isActive('/login')} />
-          <NavItem to="/signup" icon={<UserPlus />} label="Sign Up" active={isActive('/signup')} />
-        </>
-      );
-    }
+  const renderStudentLinks = () => (
+    <>
+      <Link to="/student" className={`sidebar-link ${isActive('/student') ? 'active' : ''}`}>
+        <Home className="w-5 h-5" />
+        <span>Dashboard</span>
+      </Link>
+      <Link to="/courses" className={`sidebar-link ${isActive('/courses') ? 'active' : ''}`}>
+        <BookOpen className="w-5 h-5" />
+        <span>Browse Courses</span>
+      </Link>
+      <Link to="/my-learning" className={`sidebar-link ${isActive('/my-learning') ? 'active' : ''}`}>
+        <BookMarked className="w-5 h-5" />
+        <span>My Learning</span>
+      </Link>
+      <Link to="/cart" className={`sidebar-link ${isActive('/cart') ? 'active' : ''}`}>
+        <ShoppingCart className="w-5 h-5" />
+        <span>Cart</span>
+      </Link>
+      <Link to="/student/profile" className={`sidebar-link ${isActive('/student/profile') ? 'active' : ''}`}>
+        <User className="w-5 h-5" />
+        <span>Profile</span>
+      </Link>
+    </>
+  );
 
-    // Student links
-    if (user.role === 'student') {
-      return (
-        <>
-          <NavItem to="/student" icon={<LayoutDashboard />} label="Dashboard" active={isActive('/student')} />
-          <NavItem to="/courses" icon={<BookOpen />} label="Courses" active={isActive('/courses')} />
-          <NavItem to="/my-learning" icon={<BookMarked />} label="My Learning" active={isActive('/my-learning')} />
-          <NavItem to="/cart" icon={<ShoppingCart />} label="Cart" active={isActive('/cart')} />
-          <NavItem to="/student/profile" icon={<Settings />} label="Profile" active={isActive('/student/profile')} />
-        </>
-      );
-    }
+  const renderEducatorLinks = () => (
+    <>
+      <Link to="/educator" className={`sidebar-link ${isActive('/educator') ? 'active' : ''}`}>
+        <Home className="w-5 h-5" />
+        <span>Dashboard</span>
+      </Link>
+      <Link to="/educator/courses" className={`sidebar-link ${isActive('/educator/courses') ? 'active' : ''}`}>
+        <BookOpen className="w-5 h-5" />
+        <span>My Courses</span>
+      </Link>
+      <Link to="/educator/add-course" className={`sidebar-link ${isActive('/educator/add-course') ? 'active' : ''}`}>
+        <PlusCircle className="w-5 h-5" />
+        <span>Create Course</span>
+      </Link>
+      <Link to="/educator/students" className={`sidebar-link ${isActive('/educator/students') ? 'active' : ''}`}>
+        <Users className="w-5 h-5" />
+        <span>Students</span>
+      </Link>
+      <Link to="/educator/profile" className={`sidebar-link ${isActive('/educator/profile') ? 'active' : ''}`}>
+        <User className="w-5 h-5" />
+        <span>Profile</span>
+      </Link>
+    </>
+  );
 
-    // Educator links
-    if (user.role === 'educator') {
-      return (
-        <>
-          <NavItem to="/educator" icon={<LayoutDashboard />} label="Dashboard" active={isActive('/educator')} />
-          <NavItem to="/educator/courses" icon={<Library />} label="My Courses" active={isActive('/educator/courses')} />
-          <NavItem to="/educator/add-course" icon={<BookOpen />} label="Create Course" active={isActive('/educator/add-course')} />
-          <NavItem to="/educator/students" icon={<Users />} label="Students" active={isActive('/educator/students')} />
-          <NavItem to="/educator/profile" icon={<Settings />} label="Profile" active={isActive('/educator/profile')} />
-        </>
-      );
-    }
+  const renderAdminLinks = () => (
+    <>
+      <Link to="/admin" className={`sidebar-link ${isActive('/admin') ? 'active' : ''}`}>
+        <Home className="w-5 h-5" />
+        <span>Dashboard</span>
+      </Link>
+      <Link to="/admin/students" className={`sidebar-link ${isActive('/admin/students') ? 'active' : ''}`}>
+        <Users className="w-5 h-5" />
+        <span>Students</span>
+      </Link>
+      <Link to="/admin/educators" className={`sidebar-link ${isActive('/admin/educators') ? 'active' : ''}`}>
+        <GraduationCap className="w-5 h-5" />
+        <span>Educators</span>
+      </Link>
+      <Link to="/admin/courses" className={`sidebar-link ${isActive('/admin/courses') ? 'active' : ''}`}>
+        <BookOpen className="w-5 h-5" />
+        <span>Courses</span>
+      </Link>
+      <Link to="/admin/profile" className={`sidebar-link ${isActive('/admin/profile') ? 'active' : ''}`}>
+        <User className="w-5 h-5" />
+        <span>Profile</span>
+      </Link>
+    </>
+  );
 
-    // Admin links
-    if (user.role === 'admin') {
-      return (
-        <>
-          <NavItem to="/admin" icon={<LayoutDashboard />} label="Dashboard" active={isActive('/admin')} />
-          <NavItem to="/admin/students" icon={<Users />} label="Students" active={isActive('/admin/students')} />
-          <NavItem to="/admin/educators" icon={<GraduationCap />} label="Educators" active={isActive('/admin/educators')} />
-          <NavItem to="/admin/courses" icon={<BookOpen />} label="Courses" active={isActive('/admin/courses')} />
-          <NavItem to="/admin/profile" icon={<Settings />} label="Profile" active={isActive('/admin/profile')} />
-        </>
-      );
-    }
-
-    return null;
-  };
+  const renderPublicLinks = () => (
+    <>
+      <Link to="/" className={`sidebar-link ${isActive('/') && location.pathname === '/' ? 'active' : ''}`}>
+        <Home className="w-5 h-5" />
+        <span>Home</span>
+      </Link>
+      <Link to="/courses" className={`sidebar-link ${isActive('/courses') ? 'active' : ''}`}>
+        <BookOpen className="w-5 h-5" />
+        <span>Courses</span>
+      </Link>
+    </>
+  );
 
   return (
     <>
-      {/* Mobile overlay */}
+      {/* Mobile Overlay */}
       {isOpen && isMobile && (
         <div 
           className="fixed inset-0 bg-black/50 z-40 lg:hidden"
@@ -97,84 +137,30 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
       )}
 
       {/* Sidebar */}
-      <div 
-        className={`fixed top-0 left-0 h-full bg-slate-900/95 backdrop-blur-xl border-r border-cyan-500/20 z-50 transition-all duration-300 ${
-          isOpen ? 'w-64' : 'w-0 lg:w-20'
-        } overflow-hidden`}
+      <aside 
+        className={`fixed top-16 bottom-0 left-0 z-40 w-64 bg-slate-900/95 backdrop-blur-xl border-r border-cyan-500/20 transition-all duration-300 ease-in-out ${
+          isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+        } lg:static lg:z-0`}
       >
-        <div className="flex flex-col h-full">
-          {/* Logo */}
-          <div className="flex items-center justify-center h-16 border-b border-cyan-500/20 px-4">
-            <Link to="/" className="flex items-center space-x-3 group">
-              <div className="relative">
-                <BookOpen className={`text-cyan-400 group-hover:text-cyan-300 transition-colors duration-300 ${isOpen ? 'w-8 h-8' : 'w-10 h-10'}`} />
-                <div className="absolute inset-0 bg-cyan-400/20 rounded-full blur-lg group-hover:bg-cyan-300/30 transition-all duration-300"></div>
-              </div>
-              {isOpen && (
-                <span className="text-xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
-                  Edutainverse
-                </span>
-              )}
-            </Link>
+        <div className="h-full flex flex-col">
+          <div className="flex-1 py-6 px-4 overflow-y-auto">
+            <div className="space-y-1">
+              {user ? (
+                user.role === 'student' ? renderStudentLinks() :
+                user.role === 'educator' ? renderEducatorLinks() :
+                user.role === 'admin' ? renderAdminLinks() : renderPublicLinks()
+              ) : renderPublicLinks()}
+            </div>
           </div>
-
-          {/* Toggle button */}
-          <button 
-            className="absolute top-4 -right-3 w-6 h-6 bg-slate-800 border border-cyan-500/20 rounded-full flex items-center justify-center text-cyan-400 hover:text-cyan-300 transition-colors duration-200 z-50 lg:block hidden"
-            onClick={toggleSidebar}
-          >
-            {isOpen ? <ChevronLeft size={14} /> : <ChevronRight size={14} />}
-          </button>
-
-          {/* Nav items */}
-          <div className="flex-1 overflow-y-auto py-6 px-4">
-            <nav className="space-y-2">
-              {renderNavLinks()}
-            </nav>
-          </div>
-
-          {/* Footer */}
+          
           <div className="p-4 border-t border-cyan-500/20">
-            <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-gradient-to-br from-cyan-400 to-purple-500 rounded-full flex items-center justify-center">
-                <Sparkles className="w-4 h-4 text-white" />
-              </div>
-              {isOpen && (
-                <div className="text-xs text-slate-400">
-                  <div>Edutainverse</div>
-                  <div>v1.0.0</div>
-                </div>
-              )}
+            <div className="text-xs text-cyan-200/60 text-center">
+              © 2024 EduFlow
             </div>
           </div>
         </div>
-      </div>
+      </aside>
     </>
-  );
-};
-
-interface NavItemProps {
-  to: string;
-  icon: React.ReactNode;
-  label: string;
-  active: boolean;
-}
-
-const NavItem: React.FC<NavItemProps> = ({ to, icon, label, active }) => {
-  return (
-    <Link to={to}>
-      <Button
-        variant="ghost"
-        className={`w-full justify-start mb-1 ${
-          active 
-            ? 'bg-gradient-to-r from-cyan-500/20 to-purple-500/20 text-white border-l-2 border-cyan-400' 
-            : 'text-slate-400 hover:text-white hover:bg-white/5'
-        }`}
-      >
-        <span className="mr-3">{icon}</span>
-        <span>{label}</span>
-      </Button>
-    </Link>
   );
 };
 
