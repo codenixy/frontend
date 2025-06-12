@@ -13,11 +13,11 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { LogOut, User, BookOpen, Menu, X } from 'lucide-react';
 
 interface NavbarProps {
-  isOpen: boolean;
   toggleSidebar: () => void;
+  isSidebarOpen: boolean;
 }
 
-const Navbar: React.FC<NavbarProps> = ({ isOpen, toggleSidebar }) => {
+const Navbar: React.FC<NavbarProps> = ({ toggleSidebar, isSidebarOpen }) => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
@@ -27,21 +27,19 @@ const Navbar: React.FC<NavbarProps> = ({ isOpen, toggleSidebar }) => {
   };
 
   return (
-    <nav className="bg-slate-900/95 backdrop-blur-xl border-b border-cyan-500/20 sticky top-0 z-50 shadow-lg shadow-cyan-500/10">
+    <nav className="bg-slate-900/95 backdrop-blur-xl border-b border-cyan-500/20 sticky top-0 z-40 shadow-lg shadow-cyan-500/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          {/* Logo */}
+          {/* Left side - Menu toggle and logo for mobile */}
           <div className="flex items-center">
-            <Button
-              variant="ghost"
-              size="icon"
+            <button
               onClick={toggleSidebar}
-              className="mr-2 text-cyan-400 hover:text-cyan-300 hover:bg-white/5 lg:hidden"
+              className="text-cyan-400 hover:text-cyan-300 transition-colors duration-200 lg:hidden"
             >
-              {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </Button>
+              {isSidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
             
-            <Link to='/' className="flex items-center space-x-3 group">
+            <Link to='/' className="flex items-center space-x-3 group lg:hidden ml-3">
               <div className="relative">
                 <BookOpen className="w-8 h-8 text-cyan-400 group-hover:text-cyan-300 transition-colors duration-300" />
                 <div className="absolute inset-0 bg-cyan-400/20 rounded-full blur-lg group-hover:bg-cyan-300/30 transition-all duration-300"></div>
@@ -52,7 +50,7 @@ const Navbar: React.FC<NavbarProps> = ({ isOpen, toggleSidebar }) => {
             </Link>
           </div>
 
-          {/* Auth Buttons */}
+          {/* Right side - Auth Buttons */}
           <div className="flex items-center space-x-4">
             {!user ? (
               <div className="hidden md:flex items-center space-x-4">

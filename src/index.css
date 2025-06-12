@@ -188,33 +188,3 @@
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(6, 182, 212, 0.5);
 }
-
-/* Sidebar styles */
-.sidebar-link {
-  @apply flex items-center gap-3 px-4 py-3 text-cyan-200/80 hover:text-cyan-300 hover:bg-white/5 rounded-lg transition-all duration-200;
-}
-
-.sidebar-link.active {
-  @apply bg-gradient-to-r from-cyan-500/20 to-purple-500/20 text-white border-l-2 border-cyan-400;
-}
-
-.sidebar-link svg {
-  @apply text-cyan-400;
-}
-
-/* Course player styles */
-.course-video-item {
-  @apply flex items-center gap-3 px-4 py-3 text-cyan-200/80 hover:text-cyan-300 hover:bg-white/5 rounded-lg transition-all duration-200 cursor-pointer;
-}
-
-.course-video-item.active {
-  @apply bg-gradient-to-r from-cyan-500/20 to-purple-500/20 text-white border-l-2 border-cyan-400;
-}
-
-.course-video-item.completed {
-  @apply border-l-2 border-green-400;
-}
-
-.course-video-item svg {
-  @apply text-cyan-400;
-}
