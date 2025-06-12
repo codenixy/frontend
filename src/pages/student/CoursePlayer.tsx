@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle, PlayCircle, Clock, ChevronLeft, ChevronRight } from 'lucide-react';
+import { CheckCircle, PlayCircle, Clock, ChevronLeft, ChevronRight, ArrowLeft, Sparkles } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:3000';
@@ -17,6 +17,7 @@ const CoursePlayer = () => {
   const [enrollment, setEnrollment] = useState<any>(null);
   const [watchedVideos, setWatchedVideos] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showSidebar, setShowSidebar] = useState(true);
 
   useEffect(() => {
     const fetchCourseAndEnrollment = async () => {
@@ -53,19 +54,42 @@ const CoursePlayer = () => {
       }
     };
     fetchCourseAndEnrollment();
+    
+    // Handle responsive sidebar
+    const handleResize = () => {
+      if (window.innerWidth < 1024) {
+        setShowSidebar(false);
+      } else {
+        setShowSidebar(true);
+      }
+    };
+    
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+    
     // eslint-disable-next-line
   }, [courseId, videoId]);
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-400"></div>
+      </div>
+    );
   }
 
   if (!course) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Course not found</h2>
-          <Button onClick={() => navigate('/courses')}>Browse Courses</Button>
+          <h2 className="text-2xl font-bold text-white mb-4">Course not found</h2>
+          <Button 
+            onClick={() => navigate('/courses')}
+            className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 text-white border-0"
+          >
+            Browse Courses
+          </Button>
         </div>
       </div>
     );
@@ -83,10 +107,15 @@ const CoursePlayer = () => {
 
   if (!currentVideo) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Video not found</h2>
-          <Button onClick={() => navigate(`/course/${courseId}`)}>Back to Course</Button>
+          <h2 className="text-2xl font-bold text-white mb-4">Video not found</h2>
+          <Button 
+            onClick={() => navigate(`/course/${courseId}`)}
+            className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 text-white border-0"
+          >
+            Back to Course
+          </Button>
         </div>
       </div>
     );
@@ -145,18 +174,30 @@ const CoursePlayer = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid lg:grid-cols-3 gap-8">
+        {/* Back Button */}
+        <div className="mb-6">
+          <Button 
+            variant="ghost" 
+            onClick={() => navigate(`/course/${courseId}`)}
+            className="text-cyan-400 hover:text-cyan-300 hover:bg-white/5"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Course
+          </Button>
+        </div>
+        
+        <div className="flex flex-col lg:flex-row gap-8">
           {/* Video Player */}
-          <div className="lg:col-span-2">
-            <Card>
+          <div className="lg:flex-1">
+            <Card className="bg-white/10 backdrop-blur-md border border-white/20 overflow-hidden">
               <CardContent className="p-0">
-                <div className="aspect-video bg-black rounded-t-lg">
+                <div className="aspect-video bg-black">
                   {youtubeVideoId ? (
                     <iframe
                       src={`https://www.youtube.com/embed/${youtubeVideoId}`}
-                      className="w-full h-full rounded-t-lg"
+                      className="w-full h-full"
                       allowFullScreen
                       title={currentVideo.title}
                     />
@@ -169,19 +210,19 @@ const CoursePlayer = () => {
                 
                 <div className="p-6">
                   <div className="flex items-center justify-between mb-4">
-                    <h1 className="text-2xl font-bold text-gray-900">{currentVideo.title}</h1>
+                    <h1 className="text-2xl font-bold text-white">{currentVideo.title}</h1>
                     {isWatched && (
-                      <Badge className="bg-green-500">
+                      <Badge className="bg-green-500/20 text-green-400 border-green-500/30">
                         <CheckCircle className="w-4 h-4 mr-1" />
                         Watched
                       </Badge>
                     )}
                   </div>
                   
-                  <p className="text-gray-600 mb-4">Module: {currentVideo.moduleTitle}</p>
+                  <p className="text-slate-300 mb-4">Module: {currentVideo.moduleTitle}</p>
                   
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center text-sm text-gray-500">
+                    <div className="flex items-center text-sm text-slate-400">
                       <Clock className="w-4 h-4 mr-1" />
                       {currentVideo.duration}
                     </div>
@@ -189,7 +230,10 @@ const CoursePlayer = () => {
                     <Button 
                       onClick={handleMarkAsWatched}
                       disabled={isWatched}
-                      className={isWatched ? "bg-green-500" : ""}
+                      className={isWatched 
+                        ? "bg-green-500/20 text-green-400 border border-green-500/30 hover:bg-green-500/30" 
+                        : "bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 text-white border-0"
+                      }
                     >
                       {isWatched ? (
                         <>
@@ -203,11 +247,11 @@ const CoursePlayer = () => {
                   </div>
 
                   {/* Navigation */}
-                  <div className="flex justify-between mt-6 pt-6 border-t">
+                  <div className="flex justify-between mt-6 pt-6 border-t border-white/10">
                     <Button 
                       variant="outline" 
                       disabled={!prevVideo}
-                      className="flex items-center"
+                      className="flex items-center border-white/20 text-white hover:bg-white/10"
                       onClick={() => handleNavigation(prevVideo)}
                     >
                       <ChevronLeft className="w-4 h-4 mr-1" />
@@ -216,7 +260,7 @@ const CoursePlayer = () => {
                     
                     <Button 
                       disabled={!nextVideo}
-                      className="flex items-center"
+                      className="flex items-center bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 text-white border-0"
                       onClick={() => handleNavigation(nextVideo)}
                     >
                       Next
@@ -228,54 +272,85 @@ const CoursePlayer = () => {
             </Card>
           </div>
 
-          {/* Video List Sidebar */}
-          <div className="lg:col-span-1">
-            <Card>
-              <CardHeader>
-                <CardTitle>Course Content</CardTitle>
-              </CardHeader>
-              <CardContent className="p-0">
-                <div className="space-y-2 max-h-96 overflow-y-auto">
-                  {course.modules.map((module: any) => (
-                    <div key={module._id || module.id} className="border-b last:border-b-0">
-                      <div className="p-4 bg-gray-50">
-                        <h4 className="font-medium text-gray-900">{module.title}</h4>
-                      </div>
-                      {module.videos.map((video: any) => {
-                        const isCurrentVideo = (video._id || video.id) === (videoId as string);
-                        const isVideoWatched = watchedVideos.includes(video._id || video.id);
-                        
-                        return (
-                          <div
-                            key={video._id || video.id}
-                            className={`p-4 cursor-pointer transition-colors ${
-                              isCurrentVideo ? 'bg-blue-50 border-r-4 border-blue-500' : 'hover:bg-gray-50'
-                            }`}
-                            onClick={() => handleVideoClick(video)}
-                          >
-                            <div className="flex items-center space-x-3">
-                              {isVideoWatched ? (
-                                <CheckCircle className="w-5 h-5 text-green-600" />
-                              ) : (
-                                <PlayCircle className="w-5 h-5 text-gray-400" />
-                              )}
-                              <div className="flex-1 min-w-0">
-                                <p className={`text-sm font-medium truncate ${
-                                  isCurrentVideo ? 'text-blue-600' : 'text-gray-900'
-                                }`}>
-                                  {video.title}
-                                </p>
-                                <p className="text-xs text-gray-500">{video.duration}</p>
+          {/* Video List Sidebar - Toggleable on mobile */}
+          <div className={`lg:w-80 transition-all duration-300 ${showSidebar ? 'block' : 'hidden lg:block'}`}>
+            <div className="lg:sticky lg:top-24">
+              <div className="flex items-center justify-between mb-4 lg:hidden">
+                <h3 className="text-xl font-bold text-white">Course Content</h3>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={() => setShowSidebar(!showSidebar)}
+                  className="text-cyan-400 hover:text-cyan-300 hover:bg-white/5"
+                >
+                  <ChevronRight className="w-5 h-5" />
+                </Button>
+              </div>
+              
+              <Card className="bg-white/10 backdrop-blur-md border border-white/20">
+                <CardHeader>
+                  <CardTitle className="text-white flex items-center">
+                    <Sparkles className="w-5 h-5 mr-2 text-cyan-400" />
+                    Course Content
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-0">
+                  <div className="max-h-[calc(100vh-300px)] overflow-y-auto">
+                    {course.modules.map((module: any) => (
+                      <div key={module._id || module.id} className="border-b border-white/10 last:border-b-0">
+                        <div className="p-4 bg-white/5">
+                          <h4 className="font-medium text-white">{module.title}</h4>
+                        </div>
+                        {module.videos.map((video: any) => {
+                          const isCurrentVideo = (video._id || video.id) === (videoId as string);
+                          const isVideoWatched = watchedVideos.includes(video._id || video.id);
+                          
+                          return (
+                            <div
+                              key={video._id || video.id}
+                              className={`p-4 cursor-pointer transition-all duration-300 ${
+                                isCurrentVideo 
+                                  ? 'bg-cyan-500/20 border-l-4 border-cyan-400' 
+                                  : isVideoWatched
+                                    ? 'bg-green-500/10 hover:bg-green-500/20'
+                                    : 'hover:bg-white/5'
+                              }`}
+                              onClick={() => handleVideoClick(video)}
+                            >
+                              <div className="flex items-center space-x-3">
+                                {isVideoWatched ? (
+                                  <CheckCircle className="w-5 h-5 text-green-400" />
+                                ) : (
+                                  <PlayCircle className="w-5 h-5 text-cyan-400" />
+                                )}
+                                <div className="flex-1 min-w-0">
+                                  <p className={`text-sm font-medium truncate ${
+                                    isCurrentVideo ? 'text-cyan-400' : isVideoWatched ? 'text-green-400' : 'text-white'
+                                  }`}>
+                                    {video.title}
+                                  </p>
+                                  <p className="text-xs text-slate-400">{video.duration}</p>
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+                          );
+                        })}
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+          
+          {/* Mobile toggle button */}
+          <div className="fixed bottom-6 right-6 lg:hidden z-30">
+            <Button 
+              onClick={() => setShowSidebar(!showSidebar)}
+              className="w-12 h-12 rounded-full bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 text-white border-0 shadow-lg shadow-purple-500/20"
+            >
+              {showSidebar ? <ChevronRight className="w-6 h-6" /> : <ChevronLeft className="w-6 h-6" />}
+            </Button>
           </div>
         </div>
       </div>
